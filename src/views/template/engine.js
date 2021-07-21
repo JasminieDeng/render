@@ -44,7 +44,6 @@ export default class Engine {
       let pnode = stack.pop();
       let nodestr = pnode.childrenTemplate.trim();
       re.lastIndex = 0;
-	  console.log(nodestr);
       [...nodestr.matchAll(re)].forEach((item) => {
         let n = this.nodes.get(item[1]);
         let newn = new Vnode(
@@ -68,26 +67,19 @@ export default class Engine {
     //转成成node节点
     while (stack.length > 0) {
       let [pnode, pdom, scope] = stack.pop();
-      if (pnode.attr.get("for")) {
-        let [key, prop] = pnode.attr.get("for").split("in");
-        key = key.trim();
-        prop = prop.trim();
-        for (let i = 0; i < scope[prop].length; i++) {
-          let newnode = new Vnode(
-            pnode.tag,
-            pnode.attr,
-            pnode.children,
-            pnode.parent,
-            pnode.childrenTemplate
-          );
-          let newScope = {};
-          newScope[key] = scope[prop][i];
-          let html = this.scopehtmlParse(newnode, data, newScope);
-          let ele = this.createElement(newnode, html);
-          this.scopeAtrrParse(ele, newnode, data, newScope);
-          pdom.parentNode.appendChild(ele);
-          newnode.children.forEach((item) => {
-            stack.push([item, ele, newScope]);
+      if (pnode.attr.get("if")) {
+        let keys = pnode.attr.get("if").split(".");
+        let bol = keys.reduce(function(pre, cur, index) {
+          cur && index !== keys.length ? (pre = pre[cur]) : "";
+          return pre;
+        }, data);
+        if (bol) {
+          let html = this.scopehtmlParse(pnode, data, scope);
+          let ele = this.createElement(pnode, html);
+          this.scopeAtrrParse(ele, pnode, data, scope);
+          pdom.appendChild(ele);
+          pnode.children.forEach((item) => {
+            stack.push([item, ele, scope]);
           });
         }
       } else {
