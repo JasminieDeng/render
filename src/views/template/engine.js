@@ -69,9 +69,8 @@ export default class Engine {
       let [pnode, pdom, scope] = stack.pop();
       if (pnode.attr.get("if")) {
         let keys = pnode.attr.get("if").split(".");
-        let bol = keys.reduce(function(pre, cur, index) {
-          cur && index !== keys.length ? (pre = pre[cur]) : "";
-          return pre;
+        let bol = keys.reduce(function(pre, cur) {
+          return pre[cur]
         }, data);
         if (bol) {
           let html = this.scopehtmlParse(pnode, data, scope);
