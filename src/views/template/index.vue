@@ -10,7 +10,7 @@ export default {
   mounted() {
     const v1 = new TemplateV1().mounted(this.$el);
     v1.render(this.render(), {
-      image: "@assets/img.jpg",
+      image: "https://img0.baidu.com/it/u=103721101,4076571305&fm=26&fmt=auto&gp=0.jpg",
       info: { showImage: true, showDate: false, name: "aaa" },
     });
     console.log(v1);
